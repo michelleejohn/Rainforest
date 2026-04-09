@@ -1,0 +1,230 @@
+
+import random
+from sys import exit
+import pygame
+pygame.init()
+pygame.font.Font
+# Game varibales and constansts
+GAME_WIDTH = 800
+GAME_HEIGHT = 600
+
+# pink potion class
+pinkpotion_x= GAME_WIDTH/8
+pinkpotion_y= GAME_HEIGHT/2
+pink_width = 84
+pink_height= 64
+
+class pinkpotion(pygame.Rect):
+    def __init__(self,img):
+        pygame.Rect.__init__(self,pinkpotion_x,pinkpotion_y,pink_width,pink_height)
+        self.img = img
+       
+# purple potion class
+purplepotion_x = GAME_WIDTH
+purplepotion_y = 0
+purple_width = 250
+purple_height = 400
+
+class purplepotion(pygame.Rect):
+    def __init__(self,img):
+        pygame.Rect.__init__(self,purplepotion_x,purplepotion_y,purple_width,purple_height)
+        self.img = img
+    
+# orange potion class
+orangepotion_x = GAME_WIDTH
+orangepotion_y = 0
+orange_width = 250
+orange_height = 400
+
+class orangepotion(pygame.Rect):
+    def __init__(self,img):
+        pygame.Rect.__init__(self,orangepotion_x,orangepotion_y,orange_width,orange_height)
+        self.img = img
+
+# game images
+purplepotion_image = pygame.image.load("purplepotion.png")
+purplepotion_image = pygame.transform.scale(purplepotion_image,(purple_width,purple_height))
+orangepotion_image = pygame.image.load("orangepotion.png")
+orangepotion_image = pygame.transform.scale(orangepotion_image,(orange_width,orange_height))
+pinkpotion_image = pygame.image.load("pinkpotion.png")
+pinkpotion_image = pygame.transform.scale(pinkpotion_image,(pink_width,pink_height))
+background_image = pygame.image.load("potionbg.png")
+
+white = (255,255,255)
+black = (0,0,0)
+blue = (0,0,255)
+green = (0,255,0)
+gray = (128,128,128)
+fps = 60
+timer = pygame.time.Clock()
+rows = 3
+cols = 3
+correct = [[0,0,0],
+           [0,0,0],
+           [0,0,0]]
+
+options_list = []
+spaces = []
+used = []
+new_board = True
+first_guess = False
+second_guess = False
+first_guess_num = 0
+second_guess_num = 0
+score = 0
+best_score = 0
+matches = 0
+game_over = False
+font = pygame.font.Font('carattere-regular.ttf', 20)
+# create screen
+screen = pygame.display.set_mode((GAME_WIDTH,GAME_HEIGHT))
+pygame.display.set_caption("Poiton Matching")
+title_font = pygame.font.Font("carattere-regular.ttf", 40)
+small_font = pygame.font.Font("carattere-regular.ttf", 20)
+
+
+def generate_board():
+    global options_list
+    global spaces
+    global used
+    for item in range(rows*cols//2):
+        options_list.append(item)
+
+    for item in range(rows * cols):
+        piece = options_list[random.randint(0, len(options_list)-1)]
+        spaces.append(piece)
+        if piece in used:
+            used.remove(piece)
+        else:
+            used.append(piece)
+
+
+def draw_backgrounds():
+    window.blit(background_image, (0,0))
+    top_menu = pygame.draw.rect(screen,black, [0,0,GAME_WIDTH,100])
+    title_text = title_font.render("Poition Matching", True, white)
+    screen.blit(title_text,(10,20))
+    board_space = pygame.draw.rect(screen,gray, [0,100,GAME_WIDTH,GAME_HEIGHT-200],0)
+    restart_button = pygame.draw.rect(screen,gray, [10, GAME_HEIGHT -90, GAME_WIDTH, 100],0,5 )
+    restart_text = title_font.render("Restart", True, white)
+    screen.blit(restart_text, (10,520))
+    score_text = small_font.render(f'Current turns: {score}', True, white)
+    screen.blit(score_text, (350,520))
+    best_text = small_font.render(f'Best: {best_score}', True, white)
+    screen.blit(best_text, (350,560))
+
+    return restart_button
+def draw_board():
+    global rows
+    global cols
+    global correct
+    board_list = []
+    window.blit(background_image, (0,0))
+    for i in range(cols):
+        for j in range(rows):
+            piece = pygame.draw.rect(screen,white, [i * 75 +12, j * 65 +112, 50, 50], 0,4)
+            board_list.append(piece)
+          #  place_text = small_font.render(f'{spaces[i * rows + j]}', True, gray)
+          #  screen.blit(place_text,(i * 75 + 18, j * 65 + 120))
+
+    for r in range(rows):
+        for c in range(cols):
+            if correct[r][c] == 1:
+                piece = pygame.draw.rect(screen,white, [c * 75 +12, r * 65 +110, 54, 54], 3,4) # box aorund when u get it corect
+                piece_text = small_font.render(f'{spaces[c * rows + r]}', True, black)
+                screen.blit(piece_text,(i * 75 + 18, j * 65 + 120))
+    return board_list
+
+def check_guesses(first, second):
+    global spaces
+    global correct
+    global score
+    global matches
+    if spaces[first] == spaces[second]:
+        col1 = first//rows
+        col2 = second//rows
+        row1 = first - (first // rows * rows)
+        row2 = second - (second // rows * rows)
+        if correct[row1][col1] == 0 and correct[row2][col2] == 0:
+            correct[row1][col1] = 1
+            correct[row2][col2] = 1
+            score += 1
+            matches += 1
+            print(correct)
+    else:
+        score += 1
+
+
+running = True 
+while running:
+    timer.tick(fps)
+    screen.fill(white)
+    if new_board:
+        generate_board()
+        print(spaces)
+        new_board = False
+
+    restart = draw_backgrounds
+
+    draw_backgrounds()
+    draw_board()
+
+    if first_guess and second_guess:
+            check_guesses(first_guess_num, second_guess_num)
+            pygame.time.delay(1000)
+            first_guess = False
+            second_guess = False
+
+
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            for i in range(len(board)):
+                button = board[i]
+                if not game_over:
+                    if button.collidepoint(event.pos) and not first_guess:
+                        first_guess = True
+                        first_guess_num = i
+                        print(i)
+                    if button.collidepoint(event.pos) and not second_guess and i != first_guess_num:
+                        second_guess = True
+                        second_guess_num = i
+                        print(i)
+            if restart.collidepoint(event.pos):
+                options_list = []
+                spaces = []
+                used = []
+                new_board = True
+                first_guess = False
+                second_guess = False
+                score = 0
+                matches = 0
+                correct = [[0,0,0],
+                           [0,0,0], 
+                            [0,0,0]]
+                game_over = False
+    if matches == rows * cols // 2:
+        game_over = True
+        winner = pygame.draw.rect(screen,gray, [10, HEIGHT - 300, WIDTH - 20, 100],0,5)
+        winner_text = title_font.render("You Win!", True, white)
+        screen.blit(winner_text, (10, HEIGHT - 290))
+        
+
+    if first_guess:
+        piece_text = small_font.render(f'{spaces[first_guess_num]}', True, blue)
+        location = (first_guess_num//rows * 75 + 18, (first_guess_num - (first_guess_num // rows * rows)) * 65 + 120)
+        screen.blit(piece_text,(location))
+
+    if second_guess:
+        piece_text = small_font.render(f'{spaces[second_guess_num]}', True, blue)
+        location = (second_guess_num//rows * 75 + 18, (second_guess_num - (second_guess_num // rows * rows)) * 65 + 120)
+        screen.blit(piece_text,(location))
+
+
+    pygame.display.flip
+pygame.quit()
+
+
+
