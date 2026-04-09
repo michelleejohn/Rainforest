@@ -15,6 +15,8 @@ pygame.display.set_caption("Rainforest Escape")
 start_bg = pygame.image.load("Rainforest_Background.png").convert()
 settings_bg = pygame.image.load("Rainforest_Background.png").convert()
 menu_bg = pygame.image.load("Rainforest_Background.png").convert()
+Mariposa_= pygame.image.load("Mariposa.png").convert_alpha()
+Mariposa_=pygame.transform.scale(Mariposa_,(100, 100))
 
 def start_screen():
     screen.blit(start_bg, (0, 0))
@@ -41,8 +43,6 @@ current_screen = "start"
 volume = 0.5
 brightness = 1.0
 
-
-    
 
 # Button class
 class Button:
@@ -101,7 +101,7 @@ def draw_text(text, x, y, font_obj=font):
 # Screens
 def start_screen():
     screen.blit(start_bg, (0, 0))
-    draw_text("Rainforest Escape", 260, 100, big_font)
+    draw_text("Rainforest Escape", 325, 100, big_font)
     return [
         Button("Start Game", 350, 250, 200, 50, "story"),
         Button("Settings", 350, 320, 200, 50, "settings")
@@ -112,7 +112,7 @@ def settings_screen(mouse_pos, mouse_pressed):
     
     global volume, brightness
 
-    draw_text("Settings", 360, 100, big_font)
+    draw_text("Settings", 325, 100, big_font)
 
     draw_text(f"Volume: {volume:.2f}", 300, 180)
     volume = volume_slider.update(mouse_pos, mouse_pressed)
@@ -125,14 +125,15 @@ def settings_screen(mouse_pos, mouse_pressed):
     return [Button("Back", 350, 420, 200, 50, "start")]
 
 def story_screen():
-    draw_text("Mariposa", 360, 100, big_font)
-    draw_text("The rainforest magic has been stolen!", 200, 200)
-    draw_text("Help the fairies restore it.", 250, 240)
-    return [Button("Continue", 350, 350, 200, 50, "menu")]
+    draw_text("Mariposa", 375, 100, big_font)
+    screen.blit(Mariposa_,(400, 200))
+    draw_text("The rainforest magic has been stolen!", 325, 300)
+    draw_text("Help the fairies restore it.", 325, 340)
+    return [Button("Continue", 350, 385, 200, 50, "menu")]
 
 def menu_screen():
     screen.blit(menu_bg, (0, 0))
-    draw_text("Choose a Level", 300, 100, big_font)
+    draw_text("Choose a Level", 325, 100, big_font)
     return [
         Button("Level 1", 350, 200, 200, 50, "game1"),
         Button("Level 2", 350, 260, 200, 50, "game2"),
@@ -145,8 +146,8 @@ def game_screen(title, next_screen="menu"):
     return [Button("Back", 350, 400, 200, 50, next_screen)]
 
 def end_screen():
-    draw_text("Congratulations!", 260, 150, big_font)
-    draw_text("You restored the magic!", 270, 250)
+    draw_text("Congratulations!", 325, 150, big_font)
+    draw_text("You restored the magic!", 350, 250)
     return [Button("Play Again", 350, 350, 200, 50, "start")]
 
 # Brightness overlay
