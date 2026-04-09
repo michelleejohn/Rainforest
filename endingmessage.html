@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>End Screen</title>
+
+<!-- ✅ ADD FONT -->
+<link href="https://fonts.googleapis.com/css2?family=Carattere&display=swap" rel="stylesheet">
+
+<style>
+body{
+    background-color:#e8efe8;
+    font-family: Georgia, serif; /* readable base */
+    margin:0;
+    padding:0;
+}
+
+/* main container */
+.container{
+    width:950px;
+    height:650px;
+    margin:40px auto;
+    position:relative;
+
+    background-image:url("fairyforest.png");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+
+    border:3px solid #6d8f6d;
+}
+
+/* title */
+.titlebox{
+    position:absolute;
+    top:20px;
+    left:20px;
+    border:3px solid #6d8f6d;
+    padding:10px 20px;
+    background-color:#d9ead9;
+    font-size:26px;
+    color:#2f4f2f;
+
+    font-family:'Carattere', cursive; /* ✨ */
+}
+
+/* ALL BOXES */
+.congratsbox,
+.messagebox,
+.creditsbox{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    text-align:center;
+
+    background-color:#d9ead9;
+    border:3px solid #6d8f6d;
+    color:#2f4f2f;
+
+    padding:12px 20px;
+
+    font-family:'Carattere', cursive; /* ✨ applied */
+}
+
+/* TOP BOX */
+.congratsbox{
+    top:90px;
+    width:550px;
+    font-size:38px; /* bigger for impact */
+}
+
+/* MIDDLE BOX */
+.messagebox{
+    top:270px;
+    width:220px;
+    font-size:22px;
+    line-height:1.6;
+}
+
+/* BOTTOM BOX */
+.creditsbox{
+    top:450px;
+    width:220px;
+    font-size:18px;
+    line-height:1.6;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="titlebox">End Screen</div>
+
+    <div class="congratsbox">
+        Congratulations
+    </div>
+
+    <div class="messagebox">
+        Thanks for<br>
+        playing 💕
+    </div>
+
+    <div class="creditsbox">
+        <strong>Credits:</strong><br>
+        Michelle<br>
+        Zoe<br>
+        Leesie<br>
+        Patricia
+    </div>
+
+</div>
+
+</body>
+</html>

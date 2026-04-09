@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Banquet Hall</title>
+
+<!-- ✅ GOOGLE FONT ADDED -->
+<link href="https://fonts.googleapis.com/css2?family=Carattere&display=swap" rel="stylesheet">
+
+<style>
+body{
+    background-color:#e8efe8;
+    font-family:'Carattere', cursive;  /* ✅ FIXED */
+    margin:0;
+    padding:0;
+}
+
+/* main scene container */
+.container{
+    width:950px;
+    height:650px;
+    margin:40px auto;
+    position:relative;
+
+    background-image:url("fairyforest.png");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+
+    border:3px solid #6d8f6d;
+}
+
+/* multiple fairies */
+.fairy{
+    position:absolute;
+    pointer-events:none;
+    z-index:2;
+    animation:float 3s ease-in-out infinite;
+    filter:drop-shadow(0 0 10px rgba(255,255,255,0.7));
+}
+
+/* floating animation */
+@keyframes float{
+    0% { transform:translateY(0px); }
+    50% { transform:translateY(-12px); }
+    100% { transform:translateY(0px); }
+}
+
+/* choice box */
+.choicebox{
+    position:absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    width:140px;
+    padding:14px;
+    background-color:#dff0df;
+    border:3px solid #6d8f6d;
+    text-align:center;
+    border-radius:8px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+}
+
+/* title box */
+.titlebox{
+    position:absolute;
+    top:20px;
+    left:20px;
+    border:3px solid #6d8f6d;
+    padding:10px 20px;
+    background-color:#d9ead9;
+    font-size:22px;
+    color:#2f4f2f;
+}
+
+/* speech bubble centered */
+.chatbubble{
+    width:260px;
+    padding:18px;
+    color:white;
+    font-size:18px; /* slightly bigger so Carattere looks nicer */
+    background:linear-gradient(#4f8a4f,#a6d08d);
+    border-radius:15px;
+
+    position:absolute;
+    top:100px;
+    left:50%;
+    transform:translateX(-50%);
+    text-align:center;
+}
+
+/* arrow */
+.chatbubble:after{
+    content:"";
+    position:absolute;
+    bottom:-18px;
+    left:50%;
+    transform:translateX(-50%);
+    border-width:18px 18px 0;
+    border-style:solid;
+    border-color:#a6d08d transparent transparent transparent;
+}
+
+/* buttons */
+button{
+    width:110px;
+    padding:5px;
+    margin:0;
+    font-size:14px; /* slightly bigger */
+    border:2px solid black;
+    background-color:#d8d8d8;
+    cursor:pointer;
+    border-radius:6px;
+    font-family:'Carattere', cursive; /* OPTIONAL: makes buttons match */
+}
+
+button:hover{
+    background-color:#bfbfbf;
+    box-shadow:0 0 8px rgba(255,255,255,0.8); /* ✨ nice glow */
+}
+
+.choicebox a{
+    text-decoration:none;
+}
+
+.playagain{
+    color:#2f4f2f;
+    font-size:16px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="titlebox">Banquet Hall</div>
+
+    <div class="chatbubble">
+        Thank you for helping Mariposa.<br>
+        We would like to reward you!<br>
+        Would you like to become a fairy?
+    </div>
+
+    <img src="fairy1.png" class="fairy" style="top:270px; left:24%; width:95px;" alt="fairy">
+    <img src="fairy2.png" class="fairy" style="top:245px; left:38%; width:95px;" alt="fairy">
+    <img src="fairy3.png" class="fairy" style="top:250px; left:54%; width:95px;" alt="fairy">
+    <img src="fairiesss.png" class="fairy" style="top:290px; left:71%; width:95px;" alt="fairy">
+    <img src="fairy4.png" class="fairy" style="top:315px; left:13%; width:95px;" alt="fairy">
+    <img src="fairy5.png" class="fairy" style="top:380px; left:81%; width:95px;" alt="fairy">
+
+    <div class="choicebox">
+        <button onclick="window.location.href='keepwings.html'">Keep Wings</button>
+        <button onclick="window.location.href='returnhuman.html'">Return to Human</button>
+        <button onclick="window.location.href='index.html'">Play Again</button>
+    </div>
+
+</div>
+
+</body>
+</html>
