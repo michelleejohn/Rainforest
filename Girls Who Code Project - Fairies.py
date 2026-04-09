@@ -5,15 +5,16 @@ import sys
 
 pygame.init()
 
-#load the images
-start_bg = pygame.image.load("Rainforest_Background.png").convert()
-settings_bg = pygame.image.load("Rainforest_Background.png").convert()
-menu_bg = pygame.image.load("Rainforest_Background.png").convert()
 
 # Window
 WIDTH, HEIGHT = 900, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Rainforest Escape")
+
+#load the images
+start_bg = pygame.image.load("Rainforest_Background.png").convert()
+settings_bg = pygame.image.load("Rainforest_Background.png").convert()
+menu_bg = pygame.image.load("Rainforest_Background.png").convert()
 
 def start_screen():
     screen.blit(start_bg, (0, 0))
@@ -40,8 +41,8 @@ current_screen = "start"
 volume = 0.5
 brightness = 1.0
 
-def settings_screen(mouse_pos, mouse_pressed):
-    screen.blit(settings_bg, (0, 0))
+
+    
 
 # Button class
 class Button:
@@ -99,6 +100,7 @@ def draw_text(text, x, y, font_obj=font):
 
 # Screens
 def start_screen():
+    screen.blit(start_bg, (0, 0))
     draw_text("Rainforest Escape", 260, 100, big_font)
     return [
         Button("Start Game", 350, 250, 200, 50, "story"),
@@ -106,6 +108,8 @@ def start_screen():
     ]
 
 def settings_screen(mouse_pos, mouse_pressed):
+    screen.blit(settings_bg, (0, 0))
+    
     global volume, brightness
 
     draw_text("Settings", 360, 100, big_font)
