@@ -2,6 +2,7 @@
 
 import pygame
 import sys
+import random
 
 pygame.init()
 
@@ -15,6 +16,7 @@ pygame.display.set_caption("Rainforest Escape")
 start_bg = pygame.image.load("Rainforest_Background.png").convert()
 settings_bg = pygame.image.load("Rainforest_Background.png").convert()
 menu_bg = pygame.image.load("Rainforest_Background.png").convert()
+story_bg = pygame.image.load("Rainforest_Background.png").convert()
 Mariposa_= pygame.image.load("Mariposa.png").convert_alpha()
 Mariposa_=pygame.transform.scale(Mariposa_,(100, 100))
 
@@ -88,6 +90,32 @@ class Slider:
             self.value = self.min_val + ratio * (self.max_val - self.min_val)
 
         return self.value
+    
+# box for the text
+def draw_box(x, y, w, h):
+    box = pygame.Rect(x, y, w, h)
+    pygame.draw.rect(screen, LIGHT_GREEN, box, border_radius=12)
+    pygame.draw.rect(screen, GREEN, box, 3, border_radius=12)
+    return box
+
+class Particle:
+    def __init__(self):
+        self.x = random.randint(0, WIDTH)
+        self.y = random.randint(0, HEIGHT)
+        self.size = random.randint(2, 5)
+        self.speed = random.uniform(0.5, 1.5)
+        self.alpha = random.randint(100, 255)
+
+    def update(self):
+        self.y -= self.speed
+        if self.y < 0:
+            self.y = HEIGHT
+            self.x = random.randint(0, WIDTH)
+
+    def draw(self):
+        surf = pygame.Surface((self.size*2, self.size*2), pygame.SRCALPHA)
+        pygame.draw.circle(surf, (220, 255, 230, self.alpha), (self.size, self.size), self.size)
+        screen.blit(surf, (self.x, self.y))
 
 # Sliders
 volume_slider = Slider(300, 220, 300, 0, 1, volume)
@@ -101,7 +129,11 @@ def draw_text(text, x, y, font_obj=font):
 # Screens
 def start_screen():
     screen.blit(start_bg, (0, 0))
-    draw_text("Rainforest Escape", 325, 100, big_font)
+
+    # Box
+    box = draw_box(225, 80, 450, 120)
+
+    draw_text("Rainforest Escape", 325, 120, big_font)
     return [
         Button("Start Game", 350, 250, 200, 50, "story"),
         Button("Settings", 350, 320, 200, 50, "settings")
@@ -111,6 +143,9 @@ def settings_screen(mouse_pos, mouse_pressed):
     screen.blit(settings_bg, (0, 0))
     
     global volume, brightness
+
+     # Box
+    box = draw_box(225, 80, 450, 300)
 
     draw_text("Settings", 325, 100, big_font)
 
@@ -125,6 +160,11 @@ def settings_screen(mouse_pos, mouse_pressed):
     return [Button("Back", 350, 420, 200, 50, "start")]
 
 def story_screen():
+    screen.blit(story_bg, (0, 0))
+
+     # Box
+    box = draw_box(200, 80, 500, 300)
+
     draw_text("Mariposa", 375, 100, big_font)
     screen.blit(Mariposa_,(400, 200))
     draw_text("The rainforest magic has been stolen!", 325, 300)
@@ -133,6 +173,10 @@ def story_screen():
 
 def menu_screen():
     screen.blit(menu_bg, (0, 0))
+
+     # Box
+    box = draw_box(225, 80, 450, 100)
+
     draw_text("Choose a Level", 325, 100, big_font)
     return [
         Button("Level 1", 350, 200, 200, 50, "game1"),
@@ -163,8 +207,14 @@ def apply_brightness():
         overlay.fill((255, 255, 255))
         screen.blit(overlay, (0, 0))
 
+particles = [Particle() for _ in range(40)]
+
 # Main loop
 clock = pygame.time.Clock()
+
+for p in particles:
+    p.update()
+    p.draw()
 
 while True:
     screen.fill(LIGHT_GREEN)
