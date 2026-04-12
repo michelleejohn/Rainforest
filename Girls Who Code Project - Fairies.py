@@ -133,7 +133,7 @@ def start_screen():
     # Box
     box = draw_box(225, 80, 450, 120)
 
-    draw_text("Rainforest Escape", 325, 120, big_font)
+    draw_text("Metamorfaesis", 325, 120, big_font)
     return [
         Button("Start Game", 350, 250, 200, 50, "story"),
         Button("Settings", 350, 320, 200, 50, "settings")
