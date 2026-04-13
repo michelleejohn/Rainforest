@@ -3,7 +3,11 @@ import sys
 import math
 
 
+
+
 pygame.init()
+
+
 
 
 # Screen setup
@@ -12,11 +16,15 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Fashion Surprise Game")
 
 
+
+
 # Load images
 background_img_raw = pygame.image.load('background.png').convert()
 character_base_img = pygame.image.load('character.png').convert_alpha()
 mushroom_img = pygame.image.load('mushroom.png').convert_alpha()
 fairy_img_raw = pygame.image.load('fairy.png').convert_alpha()
+
+
 
 
 # Example: 7 outfits (adjust as needed)
@@ -31,11 +39,15 @@ outfit_images_raw = [
 ]
 
 
+
+
 # Sizes
 character_size = (160, 240)  # Player size
 mushroom_size = (180, 140)
 fairy_size = (110, 110)
 outfit_size = (140, 210)     # Outfit size to fit character
+
+
 
 
 # Scale images
@@ -46,8 +58,12 @@ fairy_img = pygame.transform.scale(fairy_img_raw, fairy_size)
 outfit_images = [pygame.transform.scale(img, outfit_size) for img in outfit_images_raw]
 
 
+
+
 # Load Carattere font
-carattere_font = pygame.font.Font('Carattere.ttf', 28)
+carattere_font = pygame.font.Font('Carattere.ttf', 24)
+
+
 
 
 # Positions
@@ -55,6 +71,8 @@ carattere_font = pygame.font.Font('Carattere.ttf', 28)
 left_area_width = SCREEN_WIDTH // 2
 combined_height = character_size[1] + mushroom_size[1] - 40  # overlap adjustment
 middle_y = (SCREEN_HEIGHT - combined_height) // 2
+
+
 
 
 mushroom_pos = (
@@ -67,13 +85,17 @@ character_pos = (
 )
 
 
+
+
 # Fairy bottom left corner with margin
 fairy_margin = 20
 fairy_base_pos = (fairy_margin, SCREEN_HEIGHT - fairy_size[1] - fairy_margin)
 
 
+
+
 # Chatbox smaller and right of fairy, vertically centered with fairy
-chatbox_height = 40
+chatbox_height = 80
 chatbox_width = SCREEN_WIDTH - fairy_base_pos[0] - fairy_size[0] - 3 * fairy_margin
 chatbox_pos = (
     int(fairy_base_pos[0] + fairy_size[0] + 10),
@@ -81,9 +103,12 @@ chatbox_pos = (
 )
 chatbox_size = (int(chatbox_width), int(chatbox_height))
 
+
 num_outfits = 4
 cols = 2
 rows = 2
+
+
 
 
 # Calculate vertical spacing so all fit in right half with some top/bottom margin
@@ -94,9 +119,13 @@ outfit_spacing_y = 15
 total_outfit_height = rows * outfit_size[1] + (rows - 1) * outfit_spacing_y
 
 
+
+
 # If total outfit height is larger than available height, reduce spacing
 if total_outfit_height > available_height:
     outfit_spacing_y = max(5, (available_height - rows * outfit_size[1]) // (rows - 1))
+
+
 
 
 # Horizontal positions for two columns in right half
@@ -106,9 +135,12 @@ outfits_start_x_right = right_area_left + outfit_size[0] + 40
 outfits_start_y = right_area_top
 
 
+
+
 selected_outfit_index = None
 
-# Create clickable rectangles for 6 outfits only
+
+# Create clickable rectangles for 4 outfits only
 clickable_padding = 5
 outfit_rects = []
 for i in range(num_outfits):
@@ -123,7 +155,6 @@ for i in range(num_outfits):
         outfit_size[1] + 2 * clickable_padding
     )
     outfit_rects.append(rect)
-
 
 
 
@@ -143,8 +174,7 @@ def draw_chatbox(surface, text, font, rect, bg_color=(255, 255, 255, 180), text_
     surface.blit(chat_surf, (rect.x, rect.y))
 
 
-    rendered_text = font.render(text, True, text_color)
-    surface.blit(rendered_text, (rect.x + 10, rect.y + (rect.height - rendered_text.get_height()) // 2))
+
 
 # Calculate clickable rects slightly bigger than outfits
 clickable_padding = 5
@@ -163,9 +193,23 @@ for i in range(num_outfits):
     outfit_rects.append(rect)
 
 
+# Chat messages list
+chat_messages = [
+    "Oh, wonderful! You have such a kind heart. But now, dear adventurer,get ready… something magical is about to happen just for you!",
+    "Choose an outfit you would like to wear! Something magical, something you feel great in — the perfect attire for the adventure ahead!"
+]
+current_message_index = 0
+message_display_time = 5000  # milliseconds per message
+last_message_switch = pygame.time.get_ticks()
+
+
 clock = pygame.time.Clock()
 running = True
 start_ticks = pygame.time.get_ticks()
+
+
+
+
 
 
 while running:
@@ -175,6 +219,8 @@ while running:
             running = False
 
 
+
+
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             for i, rect in enumerate(outfit_rects):
                 if rect.collidepoint(mouse_pos):
@@ -182,10 +228,18 @@ while running:
                     break
 
 
+
+
     # Fairy bobbing animation
     seconds = (pygame.time.get_ticks() - start_ticks) / 1000
     bob_offset = int(5 * math.sin(seconds * 2 * math.pi))
     fairy_pos = (fairy_base_pos[0], fairy_base_pos[1] + bob_offset)
+   
+    # Update chat message based on time
+    now = pygame.time.get_ticks()
+    if now - last_message_switch > message_display_time:
+        current_message_index = (current_message_index + 1) % len(chat_messages)
+        last_message_switch = now
 
 
     # Draw everything
@@ -201,6 +255,8 @@ while running:
             character_pos[1] + outfit_offset_y
         )
         screen.blit(outfit_images[selected_outfit_index], outfit_pos_on_character)
+
+
 
 
     # Draw outfits with translucent colored backgrounds and borders
@@ -219,9 +275,13 @@ while running:
             border_thickness = 2
 
 
+
+
         bg_surf = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA)
         pygame.draw.rect(bg_surf, bg_color, bg_surf.get_rect(), border_radius=8)
         screen.blit(bg_surf, rect.topleft)
+
+
 
 
         # Center outfit image inside clickable box
@@ -231,11 +291,17 @@ while running:
         screen.blit(outfit_img, (img_x, img_y))
 
 
+
+
         pygame.draw.rect(screen, border_color, rect, border_thickness, border_radius=8)
+
+
 
 
     # Draw fairy and chatbox
     screen.blit(fairy_img, fairy_pos)
+
+
 
 
     chatbox_rect = pygame.Rect(
@@ -244,14 +310,15 @@ while running:
         chatbox_size[0],
         chatbox_size[1]
     )
-    chat_text = "Get ready for your surprise!"
+    chat_text = "You are so kind! Now, get ready... pick an outfit!"
+    # Draw chatbox background
     draw_chatbox(screen, chat_text, carattere_font, chatbox_rect)
-
 
     pygame.display.flip()
     clock.tick(60)
 
 
+
+
 pygame.quit()
 sys.exit()
-
