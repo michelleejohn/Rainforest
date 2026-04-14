@@ -1,3 +1,7 @@
+
+from email.mime import text
+from tkinter import font
+
 import pygame
 import sys
 import math
@@ -168,11 +172,13 @@ outfit_pos_on_character = (
 )
 
 
-def draw_chatbox(surface, text, font, rect, bg_color=(255, 255, 255, 180), text_color=(0, 0, 0)):
+def draw_chatbox(surface, text, font, rect, bg_color=(255, 255, 255, 180), text_color=(0, 0, 0), max_font_size=28, min_font_size=12, line_spacing=4):
     chat_surf = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA)
     pygame.draw.rect(chat_surf, bg_color, chat_surf.get_rect(), border_radius=5)
     surface.blit(chat_surf, (rect.x, rect.y))
 
+    rendered_text = font.render(text, True, text_color)
+    surface.blit(rendered_text, (rect.x + 10, rect.y + (rect.height - rendered_text.get_height()) // 2))
 
 
 
@@ -310,10 +316,10 @@ while running:
         chatbox_size[0],
         chatbox_size[1]
     )
+    
     chat_text = "You are so kind! Now, get ready... pick an outfit!"
     # Draw chatbox background
     draw_chatbox(screen, chat_text, carattere_font, chatbox_rect)
-
     pygame.display.flip()
     clock.tick(60)
 
