@@ -1,5 +1,6 @@
 
 from email.mime import text
+from operator import index
 from tkinter import font
 
 import pygame
@@ -11,7 +12,8 @@ import math
 
 pygame.init()
 
-
+pygame.mixer.init()  # Initialize the mixer module
+sound_effect = pygame.mixer.Sound("chime_down.wav")  # Load your sound effect file here
 
 
 # Screen setup
@@ -231,6 +233,7 @@ while running:
             for i, rect in enumerate(outfit_rects):
                 if rect.collidepoint(mouse_pos):
                     selected_outfit_index = i
+                    sound_effect.play()  # Play sound on selection
                     break
 
 
@@ -306,7 +309,6 @@ while running:
 
     # Draw fairy and chatbox
     screen.blit(fairy_img, fairy_pos)
-
 
 
 
