@@ -5,6 +5,7 @@ import math
 import subprocess
 
 pygame.init()
+pygame.mixer.init()
 
 # window
 WIDTH, HEIGHT = 950, 650
@@ -34,6 +35,7 @@ def load_image(filename, size=None):
     return image
 
 background = load_image("fairyforest.png", (WIDTH, HEIGHT))
+keep_sound = pygame.mixer.Sound("yay_z.wav")
 
 # fairy images and positions from your HTML
 fairy_data = [
@@ -287,7 +289,8 @@ while running:
 
                 if elapsed >= popup_delay + pop_duration + button_delay:
                     if keep_button.collidepoint(event.pos):
-                        current_screen = "keep"
+                         current_screen = "keep"
+                         keep_sound.play()
                     elif return_button.collidepoint(event.pos):
                         subprocess.Popen(["python", "fairies.py"])
                         running = False
