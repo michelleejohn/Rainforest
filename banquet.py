@@ -2,6 +2,7 @@ import pygame
 import sys
 import os
 import math
+import subprocess
 
 pygame.init()
 
@@ -288,7 +289,8 @@ while running:
                     if keep_button.collidepoint(event.pos):
                         current_screen = "keep"
                     elif return_button.collidepoint(event.pos):
-                        current_screen = "return"
+                        subprocess.Popen(["python", "fairies.py"])
+                        running = False
 
     if current_screen == "banquet":
         draw_scene(time_ms)
