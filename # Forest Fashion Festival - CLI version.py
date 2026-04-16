@@ -22,8 +22,6 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Fashion Surprise Game")
 
 
-
-
 # Load images
 background_img_raw = pygame.image.load('background.png').convert()
 character_base_img = pygame.image.load('character.png').convert_alpha()
