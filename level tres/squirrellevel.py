@@ -5,208 +5,224 @@ import os
 
 pygame.init()
 
-# Screen
+# SCREEN
 WIDTH, HEIGHT = 1280, 720
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("🌰 Forest Friend Rescue")
+pygame.display.set_caption("🌳 Forest Tree Adventure")
 
 font = pygame.font.SysFont("Arial", 30)
-carattere_font = pygame.font.SysFont("Arial", 24)
-
-# Game settings
-score = 0
-TOTAL_NUTS = 5
-TIME_LIMIT = 120
-start_time = pygame.time.get_ticks()
-SQUIRREL_SPEED = 6
+chat_font = pygame.font.SysFont("Arial", 24)
 
 clock = pygame.time.Clock()
 
-# Load images
-def load_image(path, width=None, height=None, fallback_color=(100,100,100)):
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    full_path = os.path.join(current_dir, path)
+# GAME SETTINGS
+TOTAL_NUTS = 5
+TIME_LIMIT = 120
+SPEED = 6
+
+start_time = pygame.time.get_ticks()
+score = 0
+
+# TREE BASE POSITION
+TREE_X = 600
+TREE_Y = 120
+
+# LOAD IMAGE FUNCTION
+def load_image(path, w=None, h=None, fallback=(200,200,200)):
     try:
-        image = pygame.image.load(full_path).convert_alpha()
-        if width and height:
-            image = pygame.transform.scale(image, (width, height))
-        return image
+        img = pygame.image.load(os.path.join("images", path)).convert_alpha()
+        if w and h:
+            img = pygame.transform.scale(img, (w, h))
+        return img
     except:
-        surf = pygame.Surface((width or 50, height or 50))
-        surf.fill(fallback_color)
+        surf = pygame.Surface((w or 50, h or 50))
+        surf.fill(fallback)
         return surf
 
-background = load_image("images/forest.png", WIDTH, HEIGHT)
-nut_image = load_image("images/nut.png", 60, 60)
-squirrel_image = load_image("images/squirrel.png", 120, 120)
+# IMAGES
+bg = load_image("forest.png", WIDTH, HEIGHT)
+nut_img = load_image("nut.png", 50, 50)
+squirrel_img = load_image("squirrel.png", 120, 120)
 
-roach = load_image("images/roach.png", 80, 80)
-owl = load_image("images/owl.png", 100, 100)
-branch = load_image("images/branch.png", 140, 60)
-apple = load_image("images/apple.png", 60, 60)
-snail = load_image("images/snail.png", 70, 70)
+branch_img = load_image("branch.png", 200, 50)
+apple_img = load_image("apple.png", 60, 60)
+owl_img = load_image("owl.png", 90, 90)
+roach_img = load_image("roach.png", 70, 70)
+snail_img = load_image("snail.png", 70, 70)
 
-fairy_img = load_image("images/fairy.png", 120, 120)
-
-# Positions
+# FIXED FAIRY (pink fallback = missing file)
+fairy_img = load_image("fairy.png", 120, 120, fallback=(255, 0, 255))
 fairy_pos = (WIDTH - 180, HEIGHT - 180)
 
-chatbox_pos = (WIDTH//2 - 300, HEIGHT - 150)
-chatbox_size = (600, 100)
+# CHATBOX
+chatbox_rect = pygame.Rect(WIDTH//2 - 300, HEIGHT - 140, 600, 100)
 
-# Chatbox function
-def draw_chatbox(screen, text, font, rect):
-    pygame.draw.rect(screen, (255, 255, 255), rect, border_radius=15)
-    pygame.draw.rect(screen, (0, 0, 0), rect, 3, border_radius=15)
+def draw_chatbox(text):
+    pygame.draw.rect(screen, (255,255,255), chatbox_rect, border_radius=12)
+    pygame.draw.rect(screen, (0,0,0), chatbox_rect, 3, border_radius=12)
 
-    words = text.split(" ")
+    words = text.split()
     lines = []
-    current = ""
+    line = ""
 
-    for word in words:
-        test = current + word + " "
-        if font.size(test)[0] < rect.width - 20:
-            current = test
+    for w in words:
+        test = line + w + " "
+        if chat_font.size(test)[0] < chatbox_rect.width - 20:
+            line = test
         else:
-            lines.append(current)
-            current = word + " "
-    lines.append(current)
+            lines.append(line)
+            line = w + " "
+    lines.append(line)
 
-    y = rect.y + 10
-    for line in lines:
-        screen.blit(font.render(line, True, (0,0,0)), (rect.x + 10, y))
-        y += font.get_height()
+    y = chatbox_rect.y + 10
+    for l in lines:
+        screen.blit(chat_font.render(l, True, (0,0,0)), (chatbox_rect.x + 10, y))
+        y += 25
 
-# Nuts
-def random_nut_positions():
-    return [
-        pygame.Rect(
-            random.randint(50, WIDTH-110),
-            random.randint(100, HEIGHT-160),
-            60, 60
-        )
-        for _ in range(TOTAL_NUTS)
-    ]
+# TREE OBJECTS
 
-# Aesthetic obstacle layout
 def create_obstacles():
     return [
-        ("branch", pygame.Rect(400, 250, 140, 60)),
-        ("branch", pygame.Rect(600, 350, 140, 60)),
-        ("branch", pygame.Rect(800, 250, 140, 60)),
+        ("branch", pygame.Rect(TREE_X - 250, TREE_Y + 150, 300, 40)),
+        ("branch", pygame.Rect(TREE_X + 50, TREE_Y + 250, 300, 40)),
+        ("branch", pygame.Rect(TREE_X - 200, TREE_Y + 350, 300, 40)),
+        ("branch", pygame.Rect(TREE_X - 120, TREE_Y + 80, 250, 40)),
 
-        ("owl", pygame.Rect(300, 150, 100, 100)),
-        ("owl", pygame.Rect(900, 150, 100, 100)),
+        ("owl", pygame.Rect(TREE_X - 260, TREE_Y + 120, 90, 90)),
+        ("owl", pygame.Rect(TREE_X + 220, TREE_Y + 200, 90, 90)),
 
-        ("roach", pygame.Rect(500, 500, 80, 80)),
-        ("roach", pygame.Rect(700, 500, 80, 80)),
+        ("roach", pygame.Rect(300, 500, 70, 70)),
+        ("snail", pygame.Rect(900, 450, 70, 70))
+    ]
 
-        ("snail", pygame.Rect(200, 400, 70, 70)),
-        ("apple", pygame.Rect(1000, 450, 60, 60))
+def nut_positions():
+    return [
+        pygame.Rect(TREE_X - 200, TREE_Y + 160, 50, 50),
+        pygame.Rect(TREE_X + 100, TREE_Y + 160, 50, 50),
+        pygame.Rect(TREE_X - 100, TREE_Y + 260, 50, 50),
+        pygame.Rect(TREE_X + 200, TREE_Y + 260, 50, 50),
+        pygame.Rect(TREE_X, TREE_Y + 350, 50, 50),
+    ]
+
+def apple_positions():
+    return [
+        pygame.Rect(TREE_X - 50, TREE_Y + 140, 60, 60),
+        pygame.Rect(TREE_X + 220, TREE_Y + 240, 60, 60),
+        pygame.Rect(TREE_X - 220, TREE_Y + 320, 60, 60),
     ]
 
 obstacles = create_obstacles()
-nut_positions = random_nut_positions()
+nuts = nut_positions()
+apples = apple_positions()
 
-squirrel_rect = pygame.Rect(WIDTH//2, HEIGHT-140, 120, 120)
-target_nut = None
+# PLAYER
+squirrel = pygame.Rect(WIDTH//2, HEIGHT-140, 120, 120)
+target = None
 
-def check_collision(rect, obstacles):
+def collision(rect):
     return any(rect.colliderect(o) for _, o in obstacles)
 
-def reset_level():
-    global nut_positions, obstacles, squirrel_rect, target_nut, start_time, score
-    nut_positions = random_nut_positions()
+# RESET
+def reset():
+    global nuts, obstacles, squirrel, target, start_time, score
+    nuts = nut_positions()
     obstacles = create_obstacles()
-    squirrel_rect.topleft = (WIDTH//2, HEIGHT-140)
-    target_nut = None
+    squirrel.topleft = (WIDTH//2, HEIGHT-140)
+    target = None
     start_time = pygame.time.get_ticks()
     score = 0
 
-# GAME LOOP
+# LOOP
 running = True
 while running:
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+    for e in pygame.event.get():
+        if e.type == pygame.QUIT:
             running = False
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            for nut in nut_positions:
-                if nut.collidepoint(event.pos):
-                    target_nut = nut
+        if e.type == pygame.MOUSEBUTTONDOWN:
+            for n in nuts:
+                if n.collidepoint(e.pos):
+                    target = n
                     break
 
-    # Timer
+    # TIMER
     elapsed = (pygame.time.get_ticks() - start_time) // 1000
     remaining = TIME_LIMIT - elapsed
 
     if remaining <= 0:
-        reset_level()
+        reset()
 
-    # SMART AI MOVEMENT
-    if target_nut:
-        dx = target_nut.x - squirrel_rect.x
-        dy = target_nut.y - squirrel_rect.y
+    # AI MOVEMENT
+    if target:
+        dx = target.x - squirrel.x
+        dy = target.y - squirrel.y
         dist = (dx*dx + dy*dy) ** 0.5
 
-        if dist < SQUIRREL_SPEED:
-            squirrel_rect.topleft = target_nut.topleft
-            nut_positions.remove(target_nut)
-            target_nut = None
+        if dist < SPEED:
+            squirrel.topleft = target.topleft
+            nuts.remove(target)
+            target = None
             score += 1
 
         else:
-            mx = int(SQUIRREL_SPEED * dx / dist)
-            my = int(SQUIRREL_SPEED * dy / dist)
+            mx = int(SPEED * dx / dist)
+            my = int(SPEED * dy / dist)
 
-            new_rect = squirrel_rect.move(mx, my)
+            move = squirrel.move(mx, my)
 
-            if not check_collision(new_rect, obstacles):
-                squirrel_rect = new_rect
+            if not collision(move):
+                squirrel = move
             else:
-                # try axis movement
-                if not check_collision(squirrel_rect.move(mx, 0), obstacles):
-                    squirrel_rect.x += mx
-                elif not check_collision(squirrel_rect.move(0, my), obstacles):
-                    squirrel_rect.y += my
+                if not collision(squirrel.move(mx, 0)):
+                    squirrel.x += mx
+                elif not collision(squirrel.move(0, my)):
+                    squirrel.y += my
                 else:
-                    squirrel_rect.x += random.choice([-SQUIRREL_SPEED, SQUIRREL_SPEED])
-                    squirrel_rect.y += random.choice([-SQUIRREL_SPEED, SQUIRREL_SPEED])
+                    squirrel.x += random.choice([-SPEED, SPEED])
+                    squirrel.y += random.choice([-SPEED, SPEED])
 
     if score == TOTAL_NUTS:
-        pygame.time.delay(500)
-        reset_level()
+        reset()
 
     # DRAW
-    screen.blit(background, (0,0))
+    screen.blit(bg, (0,0))
 
-    for nut in nut_positions:
-        screen.blit(nut_image, nut)
+    # branches
+    for name, r in obstacles:
+        if name == "branch":
+            screen.blit(branch_img, r)
 
-    for name, rect in obstacles:
-        img = {
-            "branch": branch,
-            "owl": owl,
-            "roach": roach,
-            "snail": snail,
-            "apple": apple
-        }[name]
-        screen.blit(img, rect)
+    # apples
+    for a in apples:
+        screen.blit(apple_img, a)
 
-    screen.blit(squirrel_image, squirrel_rect)
+    # nuts
+    for n in nuts:
+        screen.blit(nut_img, n)
+
+    # animals
+    for name, r in obstacles:
+        if name == "owl":
+            screen.blit(owl_img, r)
+        elif name == "roach":
+            screen.blit(roach_img, r)
+        elif name == "snail":
+            screen.blit(snail_img, r)
+
+    # squirrel + fairy
+    screen.blit(squirrel_img, squirrel)
     screen.blit(fairy_img, fairy_pos)
 
     # SCORE
-    screen.blit(font.render(f"Nuts: {score}/{TOTAL_NUTS}", True, (0,0,0)), (20, 20))
+    screen.blit(font.render(f"Nuts: {score}/{TOTAL_NUTS}", True, (0,0,0)), (20,20))
 
-    # TIMER MM:SS
+    # TIMER
     m, s = remaining // 60, remaining % 60
     screen.blit(font.render(f"Time: {m}:{s:02}", True, (0,0,0)), (WIDTH-170, 20))
 
-    # CHATBOX
-    chat_rect = pygame.Rect(chatbox_pos[0], chatbox_pos[1], chatbox_size[0], chatbox_size[1])
-    draw_chatbox(screen, "Get ready for your surprise!", carattere_font, chat_rect)
+    # CHAT
+    draw_chatbox("Get ready for your surprise in the forest tree!",)
 
     pygame.display.flip()
     clock.tick(60)
