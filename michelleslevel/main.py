@@ -8,7 +8,7 @@ pygame.init()
 pygame.mixer.init()
 
 # Screen
-WIDTH, HEIGHT = 1280, 720
+WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("🌰 Forest Friend Rescue")
 
