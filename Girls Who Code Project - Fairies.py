@@ -8,7 +8,7 @@ pygame.init()
 
 
 # Window
-WIDTH, HEIGHT = 900, 600
+WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Rainforest Escape")
 
